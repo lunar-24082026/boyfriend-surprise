@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full overflow-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Bhavya ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crimson: {
+                            50: '#fef2f2', 100: '#fde6e6', 200: '#fbb8b8',
+                            300: '#f68a8a', 400: '#ef4444', 500: '#dc2626',
+                            600: '#b91c1c', 700: '#991b1b', 800: '#7f1d1d',
+                            900: '#450a0a'
+                        },
+                        night: {
+                            950: '#030305', 900: '#080810',
+                            800: '#0e0e1a', 700: '#161625', 600: '#1e1e30'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        cursive: ['"Dancing Script"', 'cursive'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030305;
+            color: #f3f4f6;
+            user-select: none;
+        }
+        .glow-sphere {
+            position: absolute; border-radius: 50%;
+            filter: blur(130px); opacity: 0.15;
+            pointer-events: none; z-index: 0;
+        }
+        .glass-card {
+            background: rgba(10, 5, 15, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.7);
+        }
+        #sparkles-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        /* Floating background elements */
+        .floating-heart {
+            position: fixed;
+            color: rgba(220, 38, 38, 0.14);
+            animation: floatHeart linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Ambient rose petal fall */
+        .rose-petal {
+            position: fixed;
+            border-radius: 50% 0 50% 50%;
+            pointer-events: none;
+            z-index: 2;
+            animation: petalFall linear infinite;
+        }
+        @keyframes petalFall {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.85; }
+            50% { transform: translateY(45vh) rotate(180deg) translateX(30px); }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(105vh) rotate(360deg) translateX(-20px); opacity: 0; }
+        }
+
+        /* Penguin wrappers */
+        .pengu-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .pengu-img {
+            border-radius: 1.25rem;
+            border: 2px solid rgba(220, 38, 38, 0.35);
+            box-shadow: 0 12px 35px rgba(120, 10, 10, 0.55);
+            object-fit: cover;
+            background: #0e0e1a;
+        }
+        .pengu-label {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(220, 38, 38, 0.9);
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .pengu-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            background: rgba(220, 38, 38, 0.08);
+            border-radius: 1.25rem;
+            border: 2px dashed rgba(220, 38, 38, 0.35);
+        }
+
+        .pengu-bounce { animation: penguBounce 2s ease-in-out infinite; }
+        @keyframes penguBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .pengu-waddle { animation: penguWaddle 1.6s ease-in-out infinite; }
+        @keyframes penguWaddle {
+            0%, 100% { transform: rotate(-6deg); }
+            50% { transform: rotate(6deg); }
+        }
+        .pengu-wave { animation: penguWave 2.2s ease-in-out infinite; }
+        @keyframes penguWave {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(9deg) scale(1.06); }
+            75% { transform: rotate(-9deg) scale(1.06); }
+        }
+        .pengu-rage { animation: penguRage 0.35s ease-in-out infinite; }
+        @keyframes penguRage {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-5px) rotate(-4deg); }
+            75% { transform: translateX(5px) rotate(4deg); }
+        }
+
+        /* Lock Screen */
+        #lock-screen {
+            position: fixed; inset: 0; z-index: 999;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: #030305;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        #lock-screen.unlocked {
+            opacity: 0; transform: scale(1.08); pointer-events: none;
+        }
+        .pin-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            background: transparent; transition: all 0.2s ease;
+        }
+        .pin-dot.filled {
+            background: #dc2626; border-color: #dc2626;
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.7);
+        }
+        .pin-dot.error { border-color: #fbbf24 !important; background: #fbbf24 !important; }
+        .pin-dot.success { border-color: #22c55e !important; background: #22c55e !important; box-shadow: 0 0 12px rgba(34, 197, 94, 0.7); }
+        
+        .key-btn {
+            width: 72px; height: 72px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 600; color: #fde6e6;
+            background: rgba(220, 38, 38, 0.05);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            cursor: pointer; transition: all 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .key-btn:hover { background: rgba(220, 38, 38, 0.15); border-color: rgba(220, 38, 38, 0.4); }
+        .key-btn:active { transform: scale(0.92); background: rgba(220, 38, 38, 0.3); }
+        .key-btn.action-key { font-size: 1rem; color: #ef4444; }
+
+        @keyframes headShake {
+            0% { transform: translateX(0); }
+            6.5% { transform: translateX(-6px) rotateY(-9deg); }
+            18.5% { transform: translateX(5px) rotateY(7deg); }
+            31.5% { transform: translateX(-3px) rotateY(-5deg); }
+            43.5% { transform: translateX(2px) rotateY(3deg); }
+            50% { transform: translateX(0); }
+        }
+        .shake { animation: headShake 0.6s ease-in-out; }
+
+        .heartbeat { animation: heartbeat 1.2s ease-in-out infinite; }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            56% { transform: scale(1); }
+        }
+
+        .glow-pulse { animation: glowPulse 2s ease-in-out infinite; }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(220, 38, 38, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.2); }
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #dc2626, #ff6b6b, #fbbf24, #ff6b6b, #dc2626);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        /* Cake Flame */
+        .flame {
+            width: 22px; height: 36px;
+            background: linear-gradient(to top, #dc2626, #ff7a00, #ffea00, #ffffff);
+            border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+            box-shadow: 0 0 20px #ff4444, 0 0 40px #dc2626;
+            animation: flicker 1.2s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+        }
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); opacity: 0.95; }
+            50% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+            100% { transform: scale(0.92) rotate(-1deg); opacity: 0.9; }
+        }
+        .candle-smoke {
+            display: none; width: 5px; height: 26px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px; filter: blur(2px);
+            animation: smokeRise 1.5s forwards ease-out;
+        }
+        @keyframes smokeRise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0.8; }
+            100% { transform: translateY(-40px) scaleX(3); opacity: 0; }
+        }
+
+        /* Slide track movement logic */
+        #slide-track {
+            display: flex; width: 700%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .slide-page {
+            width: 100vw; height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 5.5rem 1.5rem 6rem;
+            box-sizing: border-box; position: relative;
+            overflow: hidden;
+        }
+        .decor { position: absolute; pointer-events: none; z-index: 5; }
+        .card-content { position: relative; z-index: 10; }
+
+        .polaroid {
+            background: #0e0e1a;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .polaroid:hover { transform: scale(1.04) rotate(0deg) !important; z-index: 20; }
+
+        .float-slow { animation: floatSlow 6s ease-in-out infinite alternate; }
+        .float-medium { animation: floatMed 4s ease-in-out infinite alternate; }
+        @keyframes floatSlow { 0% { transform: translateY(0); } 100% { transform: translateY(-16px); } }
+        @keyframes floatMed { 0% { transform: translateY(0); } 100% { transform: translateY(-11px); } }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(220, 38, 38, 0.3); border-radius: 4px; }
+
+        /* Rating slide poof-vanishing effect */
+        .rating-btn-disappear { animation: poof 0.5s ease-out forwards; }
+        @keyframes poof {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35) rotate(18deg); opacity: 0.5; }
+            100% { transform: scale(0) rotate(50deg); opacity: 0; }
+        }
+
+        .cursor-heart {
+            position: fixed; pointer-events: none; z-index: 9999; font-size: 16px;
+            animation: cursorFade 1s ease-out forwards;
+        }
+        @keyframes cursorFade {
+            0% { transform: scale(1) translateY(0); opacity: 1; }
+            100% { transform: scale(0.3) translateY(-50px); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body class="h-full w-full overflow-hidden font-sans relative selection:bg-crimson-500 selection:text-white">
+
+    <!-- ================= 🔒 LOCK SCREEN ================= -->
+    <div id="lock-screen">
+        <div class="glow-sphere w-80 h-80 bg-red-800 top-10 left-[-60px]"></div>
+        <div class="glow-sphere w-96 h-96 bg-red-950 bottom-10 right-[-80px]"></div>
+
+        <div class="relative z-10 flex flex-col items-center gap-6 px-6">
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-16 h-16 rounded-full bg-crimson-500/10 border border-crimson-500/30 flex items-center justify-center text-2xl text-crimson-400 glow-pulse">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-serif font-bold text-white text-center">Protected Page</h2>
+                <p class="text-xs text-crimson-200/70 text-center max-w-xs">Enter our 8-digit secret code to view your birthday surprise</p>
+            </div>
+
+            <div id="pin-dots" class="flex gap-3">
+                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+            </div>
+
+            <p id="lock-message" class="text-xs h-4 text-crimson-200/70 text-center">&nbsp;</p>
+
+            <div class="flex flex-col gap-3">
+                <div class="flex gap-3 justify-center">
+                    <button class="key-btn" onclick="pressKey('1')">1</button>
+                    <button class="key-btn" onclick="pressKey('2')">2</button>
+                    <button class="key-btn" onclick="pressKey('3')">3</button>
+                </div>
+                <div class="flex gap-3 justify-center">
+                    <button class="key-btn" onclick="pressKey('4')">4</button>
+                    <button class="key-btn" onclick="pressKey('5')">5</button>
+                    <button class="key-btn" onclick="pressKey('6')">6</button>
+                </div>
+                <div class="flex gap-3 justify-center">
+                    <button class="key-btn" onclick="pressKey('7')">7</button>
+                    <button class="key-btn" onclick="pressKey('8')">8</button>
+                    <button class="key-btn" onclick="pressKey('9')">9</button>
+                </div>
+                <div class="flex gap-3 justify-center">
+                    <button class="key-btn action-key" onclick="clearPin()"><i class="fas fa-rotate-left"></i></button>
+                    <button class="key-btn" onclick="pressKey('0')">0</button>
+                    <button class="key-btn action-key" onclick="backspace()"><i class="fas fa-delete-left"></i></button>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-crimson-300/40 text-center mt-1">Hint: Ask your boyfriend if you don't know the code 😉</p>
+        </div>
+    </div>
+
+    <!-- ================= MAIN SITE ================= -->
+    <div id="main-site" class="hidden">
+        <canvas id="sparkles-canvas"></canvas>
+        <div class="glow-sphere w-96 h-96 bg-red-900 top-0 left-[-80px]"></div>
+        <div class="glow-sphere w-[500px] h-[500px] bg-red-950/60 top-[30%] right-[-120px]"></div>
+        <div class="glow-sphere w-96 h-96 bg-red-950 bottom-0 left-1/3"></div>
+        <div id="rose-petals"></div>
+
+        <!-- Progress header -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 pt-4 pb-2 bg-gradient-to-b from-[#030305]/95 to-transparent flex flex-col gap-3">
+            <div class="flex gap-1.5 w-full max-w-2xl mx-auto">
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-full transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+                <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="progress-fill h-full bg-crimson-500 w-0 transition-all duration-300"></div></div>
+            </div>
+            <div class="flex justify-between items-center max-w-4xl mx-auto w-full">
+                <div class="text-xs font-semibold tracking-wider text-crimson-300/85 uppercase flex items-center gap-1.5">
+                    <i class="fas fa-heart text-crimson-500 heartbeat"></i> Celebrating You
+                </div>
+                <button onclick="toggleMusic()" class="glass-card px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-crimson-500/30 text-crimson-200 hover:text-white text-xs glow-pulse">
+                    <i id="music-icon" class="fas fa-play text-crimson-400"></i>
+                    <span id="music-text">music</span>
+                </button>
+                <audio id="bg-audio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-love-112199.mp3"></audio>
+            </div>
+        </header>
+
+        <!-- Slide engine viewport -->
+        <main class="w-full h-full overflow-hidden relative z-10">
+            <div id="slide-track">
+
+                <!-- ───────── SLIDE 1 : WELCOME ───────── -->
+                <section class="slide-page text-center">
+                    <!-- Pengu corner positions (safe from center text area) -->
+                    <div class="decor top-[10%] left-4 sm:left-10 float-slow">
+                        <div class="pengu-wrap pengu-bounce">
+                            <img src="pengu-love.gif" onerror="penguFail(this,'🐧')" alt="Pengu Love" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">love u!</span>
+                        </div>
+                    </div>
+                    <div class="decor top-[14%] right-4 sm:right-10 float-medium">
+                        <div class="pengu-wrap pengu-waddle">
+                            <img src="pengu-heart.gif" onerror="penguFail(this,'💕')" alt="Pengu Heart" class="pengu-img w-24 sm:w-40">
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-xl mx-auto space-y-5">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-crimson-300 text-xs font-semibold tracking-wider uppercase border border-crimson-500/30 heartbeat">
+                            <i class="fas fa-heart text-crimson-500"></i> Happy Birthday
+                        </div>
+                        <h1 class="text-4xl sm:text-6xl font-serif font-bold text-white leading-tight">
+                            Happy Birthday,<br>
+                            <span class="font-cursive text-5xl sm:text-7xl shimmer-text">Bhavya ❤️</span>
+                        </h1>
+                        <p class="text-crimson-100/80 text-sm font-light leading-relaxed">
+                            Everyone wished you today, but this is a private little space I crafted just for you. Let's start with your birthday wish!
+                        </p>
+                        <button onclick="nextSlide()" class="px-8 py-3.5 rounded-full bg-gradient-to-r from-crimson-600 to-red-700 text-white font-bold text-sm shadow-lg hover:scale-105 transition-all inline-flex items-center gap-2 glow-pulse">
+                            Make Your Wish 🎂 <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 2 : CAKE ───────── -->
+                <section class="slide-page">
+                    <!-- Bottom positioned corner pengus -->
+                    <div class="decor bottom-[8%] left-2 sm:left-8">
+                        <div class="pengu-wrap pengu-waddle">
+                            <img src="pengu-excited2.gif" onerror="penguFail(this,'🎉')" alt="Pengu Party" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">🎂 woohoo!</span>
+                        </div>
+                    </div>
+                    <div class="decor bottom-[8%] right-2 sm:right-8">
+                        <div class="pengu-wrap pengu-bounce">
+                            <img src="pengu-excited.gif" onerror="penguFail(this,'🥳')" alt="Pengu Excited" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">yay cake!</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-xl w-full mx-auto">
+                        <div class="glass-card p-6 sm:p-10 rounded-3xl text-center space-y-6 border border-crimson-500/30">
+                            <div class="space-y-1">
+                                <span class="text-[11px] uppercase tracking-widest text-crimson-400 font-semibold">Party Time</span>
+                                <h2 class="text-2xl sm:text-4xl font-serif text-white">Blow Out Your Candle</h2>
+                                <p class="text-crimson-200/70 text-xs max-w-xs mx-auto">Close your eyes, make a wish, and tap the flame!</p>
+                            </div>
+
+                            <div class="py-6 flex flex-col items-center cursor-pointer" onclick="blowCandle()">
+                                <div class="flex flex-col items-center h-14">
+                                    <div id="flame" class="flame"></div>
+                                    <div id="smoke" class="candle-smoke"></div>
+                                </div>
+                                <div class="w-4 h-12 bg-gradient-to-r from-crimson-200 via-white to-crimson-200 rounded-t-sm"></div>
+                                <div class="w-48 sm:w-60 h-16 bg-gradient-to-r from-crimson-600 via-red-400 to-crimson-600 rounded-t-2xl flex items-center justify-around px-6 shadow-inner">
+                                    <span class="text-lg">❤️</span><span>✨</span><span class="text-lg">❤️</span>
+                                </div>
+                                <div class="w-64 h-20 bg-gradient-to-r from-night-800 via-night-700 to-night-800 border-t border-crimson-500/30 rounded-b-3xl flex items-center justify-center">
+                                    <div class="w-[90%] h-[30%] border-b border-dashed border-crimson-500/30"></div>
+                                </div>
+                            </div>
+
+                            <div id="wish-status" class="text-crimson-300 font-serif text-sm italic">(Tap the flame to blow it out ❤️)</div>
+
+                            <div id="cake-next-btn" class="pt-2 hidden">
+                                <button onclick="nextSlide()" class="px-6 py-2.5 rounded-full bg-crimson-600 hover:bg-crimson-700 text-white text-xs font-bold inline-flex items-center gap-2 glow-pulse">
+                                    Next Page <i class="fas fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 3 : MEMORIES ───────── -->
+                <section class="slide-page">
+                    <!-- Top right photographer penguin -->
+                    <div class="decor top-[10%] right-4 sm:right-10">
+                        <div class="pengu-wrap pengu-wave">
+                            <img src="pengu-camera.gif" onerror="penguFail(this,'📸')" alt="Pengu Camera" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">📸 say cheese!</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-3xl w-full mx-auto space-y-5">
+                        <div class="text-center space-y-1">
+                            <p class="text-[11px] uppercase tracking-widest text-crimson-400 font-semibold">Snapshots of us</p>
+                            <h2 class="text-2xl sm:text-4xl font-serif text-white">Moments I Always Cherish</h2>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="polaroid p-3 rounded-2xl rotate-[-2deg] space-y-2">
+                                <div class="h-40 sm:h-48 rounded-xl overflow-hidden bg-night-900">
+                                    <img src="image.png" alt="Memory 1" class="w-full h-full object-cover">
+                                </div>
+                                <p class="font-serif text-xs text-center text-crimson-200">Our classic onam photo together 📸</p>
+                            </div>
+                            <div class="polaroid p-3 rounded-2xl rotate-[2deg] space-y-2 sm:translate-y-2">
+                                <div class="h-40 sm:h-48 rounded-xl overflow-hidden bg-night-900">
+                                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop" alt="Memory 2" class="w-full h-full object-cover">
+                                </div>
+                                <p class="font-serif text-xs text-center text-crimson-200">i know i took a u turn in the library but trust me i won't take another u turn</p>
+                            </div>
+                            <div class="polaroid p-3 rounded-2xl rotate-[-2deg] space-y-2">
+                                <div class="h-40 sm:h-48 rounded-xl overflow-hidden bg-night-900">
+                                    <img src="pngtree-an-old-bookcase-in-a-library-picture-image_2760144.jpg" alt="Memory 3" class="w-full h-full object-cover">
+                                </div>
+                                <p class="font-serif text-xs text-center text-crimson-200">you remember the day we first spoke about our relationship in the library, my hands were shivering back then</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 4 : TIMELINE ───────── -->
+                <section class="slide-page">
+                    <!-- Bottom right corner love penguin -->
+                    <div class="decor bottom-[10%] right-4 sm:right-10 float-medium">
+                        <div class="pengu-wrap pengu-bounce">
+                            <img src="pengu-hearts.gif" onerror="penguFail(this,'💞')" alt="Pengu Hearts" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">💕 so cute!</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-2xl w-full mx-auto space-y-6">
+                        <div class="text-center space-y-1">
+                            <p class="text-[11px] uppercase tracking-widest text-crimson-400 font-semibold">Our Milestones</p>
+                            <h2 class="text-2xl sm:text-4xl font-serif text-white">Our Journey Together</h2>
+                        </div>
+                        <div class="relative border-l border-crimson-500/30 ml-4 sm:ml-12 space-y-5 pl-7 sm:pl-9">
+                            <div class="relative">
+                                <div class="absolute -left-[35px] sm:-left-[43px] top-1 w-4 h-4 rounded-full bg-crimson-500 border-4 border-[#030305]"></div>
+                                <span class="text-[10px] font-semibold text-crimson-400 uppercase tracking-wider">The Beginning</span>
+                                <h3 class="text-base sm:text-lg font-serif font-bold text-white">The Day We First Met</h3>
+                                <p class="text-crimson-100/70 text-xs sm:text-sm">To be honest i don't remember how i started talking to you but i am glad that i did</p>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute -left-[35px] sm:-left-[43px] top-1 w-4 h-4 rounded-full bg-crimson-500 border-4 border-[#030305]"></div>
+                                <span class="text-[10px] font-semibold text-crimson-400 uppercase tracking-wider">Growing Closer</span>
+                                <h3 class="text-base sm:text-lg font-serif font-bold text-white">Realizing It Was Special</h3>
+                                <p class="text-crimson-100/70 text-xs sm:text-sm">Late-night talks and inside jokes we had this year were so great</p>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute -left-[35px] sm:-left-[43px] top-1 w-4 h-4 rounded-full bg-red-400 border-4 border-[#030305] heartbeat"></div>
+                                <span class="text-[10px] font-semibold text-crimson-400 uppercase tracking-wider">Today</span>
+                                <h3 class="text-base sm:text-lg font-serif font-bold text-white">Celebrating Your 17th Birthday</h3>
+                                <p class="text-crimson-100/70 text-xs sm:text-sm">Another wonderful year of you. I'm incredibly grateful to have you in my life.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 5 : APPRECIATION ───────── -->
+                <section class="slide-page">
+                    <!-- Top left corner waving penguin -->
+                    <div class="decor top-[10%] left-4 sm:left-10 float-slow">
+                        <div class="pengu-wrap pengu-bounce">
+                            <img src="pengu-iloveyou.gif" onerror="penguFail(this,'🥰')" alt="Pengu I Love You" class="pengu-img w-24 sm:w-40">
+                            <span class="pengu-label">i love u!</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-3xl w-full mx-auto space-y-5">
+                        <div class="text-center space-y-1">
+                            <p class="text-[11px] uppercase tracking-widest text-crimson-400 font-semibold">top secret files</p>
+                            <h2 class="text-2xl sm:text-4xl font-serif text-white">A Few Things I Love About You</h2>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div class="glass-card p-4 rounded-2xl flex items-start gap-3.5">
+                                <div class="p-2.5 bg-crimson-500/10 rounded-xl text-crimson-400"><i class="fas fa-smile-beam"></i></div>
+                                <div>
+                                    <h4 class="font-serif font-bold text-white text-base">Your Energy & Laughter</h4>
+                                    <p class="text-xs text-crimson-100/70 mt-0.5">i love the way you laugh, the way you smile — it's great.</p>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl flex items-start gap-3.5">
+                                <div class="p-2.5 bg-crimson-500/10 rounded-xl text-crimson-400"><i class="fas fa-hand-holding-heart"></i></div>
+                                <div>
+                                    <h4 class="font-serif font-bold text-white text-base">Your Laziness</h4>
+                                    <p class="text-xs text-crimson-100/70 mt-0.5">even though i say u are lazy ("which u are"), i like it — so don't change a bit</p>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl flex items-start gap-3.5">
+                                <div class="p-2.5 bg-crimson-500/10 rounded-xl text-crimson-400"><i class="fas fa-brain"></i></div>
+                                <div>
+                                    <h4 class="font-serif font-bold text-white text-base">Your Thoughts</h4>
+                                    <p class="text-xs text-crimson-100/70 mt-0.5">I always love hearing your thoughts and talking about absolutely everything.</p>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl flex items-start gap-3.5">
+                                <div class="p-2.5 bg-crimson-500/10 rounded-xl text-crimson-400"><i class="fas fa-mug-hot"></i></div>
+                                <div>
+                                    <h4 class="font-serif font-bold text-white text-base">You're My Comfort Zone</h4>
+                                    <p class="text-xs text-crimson-100/70 mt-0.5">No matter what's going on, being with you is where I find my calm.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 6 : LETTER ───────── -->
+                <section class="slide-page">
+                    <!-- Clean edge framing layout for letter side elements -->
+                    <div class="decor top-[10%] left-4 sm:left-8 float-slow">
+                        <div class="pengu-wrap pengu-waddle">
+                            <img src="pengu-iloveyou2.gif" onerror="penguFail(this,'💌')" alt="Pengu Letter" class="pengu-img w-24 sm:w-36">
+                            <span class="pengu-label">read it! 💌</span>
+                        </div>
+                    </div>
+                    <div class="decor bottom-[12%] right-4 sm:right-8 float-medium">
+                        <div class="pengu-wrap pengu-bounce">
+                            <img src="pengu-heart2.gif" onerror="penguFail(this,'❤️')" alt="Pengu Heart" class="pengu-img w-24 sm:w-36">
+                            <span class="pengu-label">❤️ forever</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content max-w-xl w-full mx-auto space-y-4">
+                        <div class="glass-card p-6 sm:p-8 rounded-3xl border border-crimson-500/30 space-y-4">
+                            <div class="flex justify-between items-center border-b border-crimson-500/20 pb-3">
+                                <div>
+                                    <p class="font-serif text-xl sm:text-2xl text-crimson-300 font-bold">To Ponnu,</p>
+                                    <p class="text-[10px] text-crimson-200/60">A special letter from me</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-crimson-500/10 border border-crimson-500/30 flex items-center justify-center text-crimson-400 heartbeat">
+                                    <i class="fas fa-envelope-open-text"></i>
+                                </div>
+                            </div>
+                            <div class="custom-scrollbar max-h-[32vh] overflow-y-auto pr-2 font-serif text-xs sm:text-sm text-crimson-100/90 leading-relaxed space-y-3">
+                                <p>Happy Birthday Bhavya! I hope this is the best birthday you have ever celebrated. I know this website must have a lot of spelling mistakes because it was made by me, not AI — sorry for that.</p>
+                                <p>I hope your day is full of surprises, real laughter, great food, and a chance to reflect on how far you've come. You deserve the absolute best of everything.</p>
+                                <p>Thank you for being such an amazing part of my life, for the countless laughs we've shared, and for simply being who you are. I'm really glad to celebrate this day with you.</p>
+                                <p class="pt-2 text-right font-semibold">With lots of love<br><span class="text-base text-crimson-300">Ujai ❤️</span></p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button onclick="nextSlide()" class="px-8 py-3 rounded-full bg-gradient-to-r from-crimson-600 to-red-700 text-white text-xs font-bold inline-flex items-center gap-2 glow-pulse">
+                                Rate this Setup ⭐ <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ───────── SLIDE 7 : RATING PRANK ───────── -->
+                <section class="slide-page">
+                    <div class="card-content max-w-xl w-full mx-auto">
+                        <div class="glass-card p-6 sm:p-8 rounded-3xl border border-crimson-500/35 space-y-5 text-center">
+
+                            <div class="flex flex-col items-center gap-1">
+                                <div id="pengu-happy" class="pengu-bounce mb-1">
+                                    <img src="pengu-heart.gif" onerror="penguFail(this,'🐧')" alt="Pengu" class="pengu-img w-28 h-28 sm:w-36 sm:h-36 rounded-full">
+                                </div>
+
+                                <div id="pengu-angry" class="hidden mb-1">
+                                    <img src="pengu-angry.gif" onerror="penguFail(this,'😡')" alt="Angry Pengu" class="pengu-img pengu-rage w-28 h-28 sm:w-40 sm:h-40">
+                                    <p class="text-crimson-400 text-[10px] font-bold mt-2 uppercase tracking-wider">Pengu is NOT happy 💢</p>
+                                </div>
+
+                                <span class="text-[11px] uppercase tracking-widest text-crimson-400 font-semibold">Your Honest Rating</span>
+                                <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Rate This Setup</h2>
+                                <p id="rating-desc" class="text-crimson-200/70 text-xs max-w-sm mx-auto transition-all duration-300">
+                                    From 1 to 10, how much did you love this? Be honest! 😏
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-5 gap-2.5 max-w-sm mx-auto">
+                                <button onclick="selectRating(1)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">1</button>
+                                <button onclick="selectRating(2)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">2</button>
+                                <button onclick="selectRating(3)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">3</button>
+                                <button onclick="selectRating(4)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">4</button>
+                                <button onclick="selectRating(5)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">5</button>
+                                <button onclick="selectRating(6)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">6</button>
+                                <button onclick="selectRating(7)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">7</button>
+                                <button onclick="selectRating(8)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">8</button>
+                                <button onclick="selectRating(9)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">9</button>
+                                <button onclick="selectRating(10)" class="rating-btn py-3 rounded-xl border border-crimson-500/20 bg-crimson-500/5 hover:bg-crimson-500/20 text-crimson-200 font-semibold text-sm transition-all">10</button>
+                            </div>
+
+                            <div id="prank-counter" class="hidden text-[10px] text-crimson-300/60 italic"></div>
+
+                            <div class="pt-2 max-w-sm mx-auto">
+                                <button id="send-btn" onclick="sendRating()" class="w-full py-3 rounded-full bg-gradient-to-r from-crimson-600 to-red-700 hover:from-crimson-700 hover:to-red-800 text-white font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 glow-pulse">
+                                    <i class="fab fa-whatsapp text-sm"></i> Send Rating to Boyfriend
+                                </button>
+                            </div>
+
+                            <button onclick="goToSlide(0)" class="text-[10px] text-crimson-300/40 hover:text-crimson-400 inline-flex items-center gap-1">
+                                <i class="fas fa-redo-alt text-[8px]"></i> Replay from Slide 1
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="fixed bottom-0 left-0 right-0 z-50 px-6 py-4 bg-gradient-to-t from-[#030305]/95 to-transparent flex justify-between items-center max-w-xl mx-auto">
+            <button id="prev-btn" onclick="prevSlide()" class="glass-card px-4 py-2 rounded-full text-xs font-semibold text-crimson-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1.5">
+                <i class="fas fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <span id="slide-indicator" class="text-xs font-semibold text-crimson-300/70 font-mono">1 / 7</span>
+            <button id="next-btn" onclick="nextSlide()" class="glass-card px-4 py-2 rounded-full text-xs font-semibold text-crimson-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1.5">
+                Next <i class="fas fa-chevron-right text-[10px]"></i>
+            </button>
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ══════════ CONFIG ══════════ */
+        const CORRECT_PIN     = "24082026";
+        const BOYFRIEND_PHONE = "+919495881031";
+
+        /* ══════════ GIF FALLBACK ══════════ */
+        function penguFail(img, emoji) {
+            const box = document.createElement('div');
+            box.className = 'pengu-fallback ' + img.className.replace('pengu-img','');
+            box.style.width  = img.offsetWidth  ? img.offsetWidth  + 'px' : '140px';
+            box.style.height = img.offsetHeight ? img.offsetHeight + 'px' : '140px';
+            box.style.minWidth = '110px'; box.style.minHeight = '110px';
+            box.textContent = emoji;
+            img.replaceWith(box);
+        }
+
+        /* ══════════ LOCK SCREEN ══════════ */
+        let enteredPin = "";
+        const pinDots     = document.querySelectorAll('.pin-dot');
+        const lockScreen  = document.getElementById('lock-screen');
+        const mainSite    = document.getElementById('main-site');
+        const lockMessage = document.getElementById('lock-message');
+
+        function pressKey(n) {
+            if (enteredPin.length >= 8) return;
+            enteredPin += n; updatePinDots();
+            if (enteredPin.length === 8) setTimeout(checkPin, 250);
+        }
+        function backspace() {
+            if (!enteredPin.length) return;
+            enteredPin = enteredPin.slice(0,-1); updatePinDots(); lockMessage.innerHTML = "&nbsp;";
+        }
+        function clearPin() {
+            enteredPin = ""; updatePinDots(); lockMessage.innerHTML = "&nbsp;";
+            pinDots.forEach(d => d.classList.remove('error','success'));
+        }
+        function updatePinDots() {
+            pinDots.forEach((d,i) => {
+                d.classList.remove('error','success');
+                d.classList.toggle('filled', i < enteredPin.length);
+            });
+        }
+        function checkPin() {
+            if (enteredPin === CORRECT_PIN) {
+                pinDots.forEach(d => d.classList.add('success'));
+                lockMessage.innerHTML = '<span class="text-green-400 font-bold">❤️ Access Granted</span>';
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ['#dc2626', '#ef4444', '#ffffff', '#b91c1c', '#ff6b6b'] });
+                setTimeout(() => {
+                    lockScreen.classList.add('unlocked');
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                        mainSite.classList.remove('hidden');
+                        mainSite.classList.add('h-full');
+                        initSite();
+                    }, 600);
+                }, 1000);
+            } else {
+                pinDots.forEach(d => d.classList.add('error'));
+                document.getElementById('pin-dots').classList.add('shake');
+                lockMessage.innerHTML = '<span class="text-yellow-400 font-bold">Incorrect code! Try again ❌</span>';
+                setTimeout(() => {
+                    document.getElementById('pin-dots').classList.remove('shake');
+                    clearPin();
+                }, 800);
+            }
+        }
+        document.addEventListener('keydown', e => {
+            if (lockScreen.style.display === 'none') return;
+            if (/^\d$/.test(e.key)) pressKey(e.key);
+            else if (e.key === 'Backspace') backspace();
+            else if (e.key === 'Escape')    clearPin();
+        });
+
+        /* ══════════ SLIDES ══════════ */
+        let currentSlide = 0;
+        const totalSlides = 7;
+
+        function initSite() {
+            updateSlideUI(); initSparkles(); initPetals(); initCursorHearts(); initFloatingHearts();
+        }
+        function updateSlideUI() {
+            document.getElementById('slide-track').style.transform = `translateX(-${currentSlide * (100/totalSlides)}%)`;
+            document.querySelectorAll('.progress-fill').forEach((f,i) => f.style.width = i <= currentSlide ? '100%' : '0%');
+            document.getElementById('slide-indicator').textContent = `${currentSlide+1} / ${totalSlides}`;
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            const nb = document.getElementById('next-btn');
+            nb.style.display = currentSlide === totalSlides-1 ? 'none' : 'flex';
+        }
+        function nextSlide() { if (currentSlide < totalSlides-1) { currentSlide++; updateSlideUI(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlideUI(); } }
+        function goToSlide(i) { currentSlide = i; updateSlideUI(); }
+
+        window.addEventListener('keydown', e => {
+            if (lockScreen.style.display !== 'none') return;
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            if (lockScreen.style.display !== 'none') return;
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive:true});
+        document.addEventListener('touchend', e => {
+            if (lockScreen.style.display !== 'none') return;
+            const diff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 45) diff > 0 ? nextSlide() : prevSlide();
+        }, {passive:true});
+
+        /* ══════════ AMBIENCE ══════════ */
+        function initSparkles() {
+            const cv = document.getElementById('sparkles-canvas'), ctx = cv.getContext('2d');
+            const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+            addEventListener('resize', resize); resize();
+            const cols = ['220,38,38','239,68,68','248,113,113','255,255,255'];
+            class S {
+                constructor(){ this.reset(); }
+                reset() {
+                    this.x = Math.random()*cv.width;
+                    this.y = cv.height + Math.random()*50;
+                    this.size = Math.random()*2+1;
+                    this.sp = Math.random()*.6+.3;
+                    this.op = Math.random()*.5+.15;
+                    this.c = cols[Math.floor(Math.random()*cols.length)];
+                }
+                step(){ this.y -= this.sp; if (this.y < -10) this.reset(); }
+                draw(){ ctx.fillStyle = `rgba(${this.c},${this.op})`; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+            }
+            const list = Array.from({length:38}, () => new S());
+            (function loop(){ ctx.clearRect(0,0,cv.width,cv.height); list.forEach(s=>{s.step();s.draw();}); requestAnimationFrame(loop); })();
+        }
+        function initPetals() {
+            const box = document.getElementById('rose-petals');
+            const cols = ['#dc2626','#b91c1c','#991b1b','#ef4444','#7f1d1d'];
+            for (let i=0;i<14;i++){
+                const p = document.createElement('div');
+                p.className = 'rose-petal';
+                const s = Math.random()*8+8;
+                Object.assign(p.style, {
+                    left: Math.random()*100+'vw', width: s+'px', height: s+'px',
+                    backgroundColor: cols[Math.floor(Math.random()*cols.length)],
+                    animationDuration: (Math.random()*8+8)+'s',
+                    animationDelay: (Math.random()*10)+'s'
+                });
+                box.appendChild(p);
+            }
+        }
+        function initCursorHearts() {
+            let last = 0;
+            const set = ['❤️','💕','✨','🌹'];
+            addEventListener('mousemove', e => {
+                if (Date.now()-last < 120) return; last = Date.now();
+                const h = document.createElement('div');
+                h.className = 'cursor-heart';
+                h.style.left = e.clientX+'px'; h.style.top = e.clientY+'px';
+                h.textContent = set[Math.floor(Math.random()*set.length)];
+                document.body.appendChild(h);
+                setTimeout(()=>h.remove(),1000);
+            });
+        }
+        function initFloatingHearts() {
+            const set = ['♥','❤','♡'];
+            for (let i=0;i<9;i++){
+                const h = document.createElement('div');
+                h.className = 'floating-heart';
+                h.textContent = set[Math.floor(Math.random()*set.length)];
+                Object.assign(h.style, {
+                    left: Math.random()*100+'vw',
+                    fontSize: (Math.random()*20+14)+'px',
+                    animationDuration: (Math.random()*12+10)+'s',
+                    animationDelay: (Math.random()*8)+'s'
+                });
+                mainSite.appendChild(h);
+            }
+        }
+
+        /* ══════════ MUSIC ══════════ */
+        const audio = document.getElementById('bg-audio');
+        let playing = false;
+        function toggleMusic() {
+            const ic = document.getElementById('music-icon'), tx = document.getElementById('music-text');
+            if (playing) { audio.pause(); ic.className='fas fa-play text-crimson-400'; tx.textContent='Our Song'; }
+            else { audio.play().catch(()=>{}); ic.className='fas fa-pause text-crimson-400'; tx.textContent='Playing ❤️'; }
+            playing = !playing;
+        }
+
+        /* ══════════ CANDLE ══════════ */
+        let candleBlown = false;
+        function blowCandle() {
+            if (candleBlown) return; candleBlown = true;
+            document.getElementById('flame').style.display = 'none';
+            document.getElementById('smoke').style.display = 'block';
+            document.getElementById('wish-status').innerHTML = "❤️ <strong class='text-white'>WISH GRANTED!</strong> Happy Birthday! ❤️";
+            document.getElementById('cake-next-btn').classList.remove('hidden');
+            const d = { origin:{y:.6} };
+            const fire = (r,o) => confetti(Object.assign({}, d, o, { particleCount: Math.floor(190*r) }));
+            fire(.25,{spread:26,startVelocity:55,colors:['#dc2626','#ef4444']});
+            fire(.20,{spread:60,colors:['#ffffff','#fef2f2']});
+            fire(.35,{spread:100,decay:.91,scalar:.8});
+            fire(.10,{spread:120,startVelocity:25,colors:['#b91c1c']});
+            fire(.10,{spread:120,startVelocity:45,colors:['#ff6b6b','#fbbf24']});
+        }
+
+        /* ══════════ RATING PRANK ══════════ */
+        let selectedScore = null, attempts = 0;
+        const gone = new Set();
+
+        const prankLines = [
+            "😱 HOW DARE YOU?! That button just exploded! *poof*",
+            "💢 Pengu is FURIOUS! Rate higher or else!",
+            "😤 That low?! Pengu flipped the table! Gone forever!",
+            "💨 Deleted from existence. Pengu won't tolerate disrespect!",
+            "🐧 *ANGRY NOOT NOOT* — ONLY 8, 9, 10 ALLOWED!",
+            "🔥 You're making Pengu CRY! Aim higher please!",
+            "✨ That button never existed. STOP. TRYING. 😜"
+        ];
+
+        function selectRating(score) {
+            const desc    = document.getElementById('rating-desc');
+            const btns    = document.querySelectorAll('.rating-btn');
+            const happy   = document.getElementById('pengu-happy');
+            const angry   = document.getElementById('pengu-angry');
+            const counter = document.getElementById('prank-counter');
+
+            /* ── PRANK: 1–7 vanish ── */
+            if (score <= 7) {
+                attempts++;
+                happy.classList.add('hidden');
+                angry.classList.remove('hidden');
+
+                btns.forEach(b => {
+                    if (parseInt(b.textContent) === score && !gone.has(score)) {
+                        gone.add(score);
+                        b.classList.add('rating-btn-disappear');
+                        setTimeout(() => {
+                            b.style.visibility   = 'hidden';
+                            b.style.pointerEvents = 'none';
+                        }, 500);
+                    }
+                });
+
+                desc.innerHTML = `<strong class="shimmer-text text-sm">${prankLines[Math.min(attempts-1, prankLines.length-1)]}</strong>`;
+                counter.classList.remove('hidden');
+                counter.textContent = `💥 Buttons destroyed: ${gone.size}/7 — Pengu only accepts 8, 9 or 10! 🐧💢`;
+                confetti({ particleCount:16, spread:35, origin:{y:.6}, colors:['#7f1d1d','#991b1b','#ef4444'] });
+                return;
+            }
+
+            /* ── VALID: 8, 9, 10 ── */
+            selectedScore = score;
+            angry.classList.add('hidden');
+            happy.classList.remove('hidden');
+
+            btns.forEach(b => {
+                const v = parseInt(b.textContent);
+                if (v === score) {
+                    b.classList.add('bg-crimson-600','text-white','font-bold','scale-110');
+                    b.classList.remove('bg-crimson-500/5','text-crimson-200');
+                } else if (!gone.has(v)) {
+                    b.classList.remove('bg-crimson-600','text-white','font-bold','scale-110');
+                    b.classList.add('bg-crimson-500/5','text-crimson-200');
+                }
+            });
+
+            desc.innerHTML = `You chose <strong class="text-white text-lg">${score}/10</strong> — Pengu is happy now! 🐧❤️`;
+            confetti({ particleCount:65, spread:70, origin:{y:.6}, colors:['#dc2626','#ef4444','#ffffff','#ff6b6b'] });
+        }
+
+        function sendRating() {
+            const btn = document.getElementById('send-btn');
+            if (!selectedScore) {
+                btn.classList.add('shake');
+                setTimeout(()=>btn.classList.remove('shake'), 600);
+                document.getElementById('rating-desc').innerHTML = "<strong class='text-crimson-400'>⚠️ Pick 8, 9 or 10 first!</strong> Angry Pengu destroyed the rest 🐧💥";
+                return;
+            }
+
+            const msg = encodeURIComponent(`Hey! I just rated your birthday setup a solid ${selectedScore}/10! 🎂❤️ Pengu and I loved it! 🐧`);
+
+            const end = Date.now() + 2000;
+            (function frame(){
+                confetti({particleCount:4,angle:60,spread:55,origin:{x:0}, colors:['#dc2626','#ef4444','#ffffff','#ff6b6b','#fbbf24']});
+                confetti({particleCount:4,angle:120,spread:55,origin:{x:1}, colors:['#dc2626','#ef4444','#ffffff','#ff6b6b','#fbbf24']});
+                if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+
+            setTimeout(() => {
+                window.open(`https://api.whatsapp.com/send?phone=${BOYFRIEND_PHONE}&text=${msg}`, '_blank');
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
